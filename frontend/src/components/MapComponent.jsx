@@ -5,7 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
-export default function MapComponent({ onAreaSelect, searchedLocation, granules = [] }) {
+export default function MapComponent({ onAreaSelect, searchedLocation, height = '500px', granules = [] }) {
   const mapRef = useRef();
   const featureGroupRef = useRef();
   const handleCreated = (e) => {
@@ -62,7 +62,7 @@ export default function MapComponent({ onAreaSelect, searchedLocation, granules 
       ref={mapRef}
       center={[0, 0]}
       zoom={2}
-      style={{ height: '500px', width: '100%' }}
+      style={{ height, width: '100%', flexGrow: 1 }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
