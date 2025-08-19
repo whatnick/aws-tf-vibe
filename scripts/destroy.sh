@@ -6,7 +6,7 @@ AWS_REGION="us-west-2"
 
 echo "🗑️  Destroying STAC Lookup Application..."
 
-cd terraform
+cd ../terraform
 
 # Get S3 bucket name before destroying
 S3_BUCKET=$(terraform output -raw s3_bucket 2>/dev/null || echo "")

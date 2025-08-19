@@ -8,7 +8,7 @@ echo "🚀 Deploying STAC Lookup Application..."
 
 # Build frontend
 echo "📦 Building frontend..."
-cd frontend
+cd ../frontend
 npm ci
 VITE_API_URL="https://API_GATEWAY_URL/prod/api" npm run build
 cd ..
@@ -33,7 +33,7 @@ S3_BUCKET=$(terraform output -raw s3_bucket)
 FRONTEND_URL=$(terraform output -raw frontend_url)
 
 echo "🔄 Updating frontend with API URL..."
-cd ../frontend
+cd frontend
 sed -i.bak "s|https://API_GATEWAY_URL/prod/api|$API_URL/api|g" dist/assets/*.js
 rm -f dist/assets/*.js.bak
 

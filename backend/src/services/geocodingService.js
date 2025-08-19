@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { simplify } from '@turf/simplify';
+import simplify from '@turf/simplify';
 import { polygon } from '@turf/helpers';
 
 export const geocodingService = {

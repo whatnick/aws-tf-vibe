@@ -180,10 +180,10 @@ variable "project_name" {
 
 ```bash
 # Deploy to AWS Lambda + API Gateway + S3 + CloudFront
-./deploy.sh
+./scripts/deploy.sh
 
 # Destroy resources
-./destroy.sh
+./scripts/destroy.sh
 ```
 
 ### Docker (Local)
