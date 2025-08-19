@@ -200,17 +200,37 @@ AWS_SESSION_TOKEN=your_session_token (if using temporary credentials)
 ```
 stac-lookup-app/
 ├── .github/workflows/     # CI/CD pipelines
+│   ├── deploy.yml         # Production deployment workflow
+│   └── test.yml           # Testing and linting workflow
 ├── frontend/              # React application
 │   ├── src/
-│   │   ├── components/    # UI components
-│   │   ├── services/      # API clients
-│   │   └── __tests__/     # Jest test suites
-├── backend/               # Express API server
+│   │   ├── components/    # UI components (Map, Filters, Search)
+│   │   ├── services/      # API clients and HTTP services
+│   │   └── __tests__/     # Jest test suites (90% coverage)
+│   ├── babel.config.js    # Babel configuration for testing
+│   ├── jest.config.js     # Jest testing configuration
+│   └── package.json       # Frontend dependencies and scripts
+├── backend/               # Express API server (development)
 │   ├── src/
-│   │   ├── routes/        # API endpoints
-│   │   ├── services/      # Business logic
-│   │   └── __tests__/     # Jest test suites
-├── lambda/                # AWS Lambda deployment
+│   │   ├── routes/        # API endpoints (STAC, geocoding)
+│   │   ├── services/      # Business logic and external APIs
+│   │   └── __tests__/     # Jest test suites (90% coverage)
+│   ├── babel.config.js    # Babel configuration for ES6 modules
+│   ├── jest.config.js     # Jest testing configuration
+│   └── package.json       # Backend dependencies and scripts
+├── lambda/                # AWS Lambda deployment (production)
+│   ├── routes/            # API route handlers
+│   │   └── stac.js        # STAC API endpoints with satellite summary
+│   ├── __tests__/         # Lambda-specific test suites
+│   │   └── index.test.js  # Express app and middleware tests
+│   ├── index.js           # Lambda entry point with serverless-express
+│   ├── jest.config.js     # Jest configuration with coverage
+│   └── package.json       # Lambda runtime dependencies
 ├── terraform/             # Infrastructure as Code
-└── docker/                # Container configuration
+│   ├── main.tf            # Core AWS resources (S3, CloudFront, Lambda)
+│   ├── outputs.tf         # Infrastructure outputs (URLs, ARNs)
+│   ├── variables.tf       # Configurable parameters
+│   └── lambda.zip         # Packaged Lambda deployment artifact
+└── docker/                # Container configuration (optional)
+    └── Dockerfile         # Multi-stage build for local development
 ```
