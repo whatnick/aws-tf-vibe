@@ -35,12 +35,12 @@ jobs:
     - name: Test Frontend
       run: |
         cd frontend
-        npm test -- --watchAll=false
+        npm run test:ci
     
     - name: Test Backend
       run: |
         cd backend
-        npm test -- --watchAll=false
+        npm run test:ci
     
     - name: Build frontend
       run: |

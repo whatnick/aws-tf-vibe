@@ -35,7 +35,7 @@ jobs:
     - name: Test Frontend
       run: |
         cd frontend
-        npm test -- --watchAll=false
+        npm run test:ci
     
     - name: Lint Backend
       run: |
@@ -45,7 +45,7 @@ jobs:
     - name: Test Backend
       run: |
         cd backend
-        npm test -- --watchAll=false
+        npm run test:ci
     
     - name: Build Frontend
       run: |

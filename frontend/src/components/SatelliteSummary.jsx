@@ -1,1 +1,76 @@
-import { Paper, Typography, Grid, Chip, Box } from '@mui/material';\nimport { Satellite, Terrain, Public } from '@mui/icons-material';\n\nexport default function SatelliteSummary({ summary }) {\n  if (!summary || summary.total === 0) {\n    return null;\n  }\n\n  const getSatelliteIcon = (type) => {\n    switch (type) {\n      case 'sentinel-2': return <Satellite sx={{ mr: 1 }} />;\n      case 'landsat': return <Terrain sx={{ mr: 1 }} />;\n      default: return <Public sx={{ mr: 1 }} />;\n    }\n  };\n\n  const getSatelliteName = (type) => {\n    switch (type) {\n      case 'sentinel-2': return 'Sentinel-2';\n      case 'landsat': return 'Landsat';\n      default: return 'Other';\n    }\n  };\n\n  const getChipColor = (type) => {\n    switch (type) {\n      case 'sentinel-2': return 'primary';\n      case 'landsat': return 'secondary';\n      default: return 'default';\n    }\n  };\n\n  return (\n    <Paper elevation={1} sx={{ p: 2, mt: 2 }}>\n      <Typography variant=\"h6\" gutterBottom>\n        Satellite Data Summary\n      </Typography>\n      \n      <Grid container spacing={2}>\n        {Object.entries(summary)\n          .filter(([key]) => key !== 'total' && summary[key] > 0)\n          .map(([satellite, count]) => (\n            <Grid item xs={12} sm={4} key={satellite}>\n              <Box display=\"flex\" alignItems=\"center\" justifyContent=\"space-between\">\n                <Box display=\"flex\" alignItems=\"center\">\n                  {getSatelliteIcon(satellite)}\n                  <Typography variant=\"body2\">\n                    {getSatelliteName(satellite)}\n                  </Typography>\n                </Box>\n                <Chip \n                  label={count.toLocaleString()} \n                  color={getChipColor(satellite)}\n                  size=\"small\"\n                />\n              </Box>\n            </Grid>\n          ))\n        }\n        \n        <Grid item xs={12}>\n          <Box display=\"flex\" alignItems=\"center\" justifyContent=\"space-between\" sx={{ mt: 1, pt: 1, borderTop: 1, borderColor: 'divider' }}>\n            <Typography variant=\"subtitle2\" fontWeight=\"bold\">\n              Total Granules\n            </Typography>\n            <Chip \n              label={summary.total.toLocaleString()} \n              color=\"success\"\n              variant=\"outlined\"\n            />\n          </Box>\n        </Grid>\n      </Grid>\n    </Paper>\n  );\n}
+import { Paper, Typography, Grid, Chip, Box } from '@mui/material';
+import { Satellite, Terrain, Public } from '@mui/icons-material';
+
+export default function SatelliteSummary({ summary }) {
+  if (!summary || summary.total === 0) {
+    return null;
+  }
+
+  const getSatelliteIcon = (type) => {
+    switch (type) {
+      case 'sentinel-2': return <Satellite sx={{ mr: 1 }} />;
+      case 'landsat': return <Terrain sx={{ mr: 1 }} />;
+      default: return <Public sx={{ mr: 1 }} />;
+    }
+  };
+
+  const getSatelliteName = (type) => {
+    switch (type) {
+      case 'sentinel-2': return 'Sentinel-2';
+      case 'landsat': return 'Landsat';
+      default: return 'Other';
+    }
+  };
+
+  const getChipColor = (type) => {
+    switch (type) {
+      case 'sentinel-2': return 'primary';
+      case 'landsat': return 'secondary';
+      default: return 'default';
+    }
+  };
+
+  return (
+    <Paper elevation={1} sx={{ p: 2, mt: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        Satellite Data Summary
+      </Typography>
+      
+      <Grid container spacing={2}>
+        {Object.entries(summary)
+          .filter(([key]) => key !== 'total' && summary[key] > 0)
+          .map(([satellite, count]) => (
+            <Grid item xs={12} sm={4} key={satellite}>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box display="flex" alignItems="center">
+                  {getSatelliteIcon(satellite)}
+                  <Typography variant="body2">
+                    {getSatelliteName(satellite)}
+                  </Typography>
+                </Box>
+                <Chip 
+                  label={count.toLocaleString()} 
+                  color={getChipColor(satellite)}
+                  size="small"
+                />
+              </Box>
+            </Grid>
+          ))
+        }
+        
+        <Grid item xs={12}>
+          <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mt: 1, pt: 1, borderTop: 1, borderColor: 'divider' }}>
+            <Typography variant="subtitle2" fontWeight="bold">
+              Total Granules
+            </Typography>
+            <Chip 
+              label={summary.total.toLocaleString()} 
+              color="success"
+              variant="outlined"
+            />
+          </Box>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+}
