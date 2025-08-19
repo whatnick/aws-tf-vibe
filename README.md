@@ -112,6 +112,38 @@ Access the application at http://localhost:5173
 - **Polygon Simplification**: Reduces API payload size
 - **Efficient Rendering**: Optimized map updates and overlays
 
+## Terraform Infrastructure Components
+
+### Core Resources
+- **S3 Bucket**: Static website hosting with versioning
+- **CloudFront Distribution**: Global CDN with HTTPS and custom error pages
+- **Origin Access Identity**: Secure S3 access from CloudFront only
+- **Lambda Function**: Serverless API backend (Node.js 18.x)
+- **API Gateway**: REST API with proxy integration and CORS
+- **IAM Roles**: Lambda execution role with CloudWatch logging
+
+### Security & Access
+- **S3 Bucket Policy**: Restricts access to CloudFront OAI only
+- **Public Access Block**: Prevents accidental public S3 access
+- **Lambda Permissions**: API Gateway invoke permissions
+- **HTTPS Enforcement**: CloudFront redirects HTTP to HTTPS
+
+### Configuration
+```hcl
+# Key Terraform variables
+variable "aws_region" {
+  default = "us-west-2"
+}
+variable "project_name" {
+  default = "stac-lookup"
+}
+```
+
+### Outputs
+- **frontend_url**: CloudFront distribution URL
+- **api_url**: API Gateway endpoint URL  
+- **s3_bucket**: S3 bucket name for deployments
+
 ## Deployment Options
 
 ### Serverless (AWS) - Currently Deployed
