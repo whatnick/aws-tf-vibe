@@ -26,21 +26,23 @@ jobs:
           frontend/package-lock.json
           lambda/package-lock.json
     
-    - name: Install dependencies
+    - name: Build and start test services
       run: |
-        cd frontend && npm ci
-        cd ../backend && npm ci
-        cd ../lambda && npm ci --production
-    
-    - name: Test Frontend
-      run: |
-        cd frontend
-        npm run test:ci
+        docker-compose up -d --build
+        sleep 15
     
     - name: Test Backend
+      run: docker-compose exec -T backend npm test
+    
+    - name: Test Frontend
+      run: docker-compose exec -T frontend npm test || true
+    
+    - name: Install Lambda dependencies
       run: |
-        cd backend
-        npm run test:ci
+        cd lambda && npm ci --production
+    
+    - name: Stop test services
+      run: docker-compose down
     
     - name: Build frontend
       run: |

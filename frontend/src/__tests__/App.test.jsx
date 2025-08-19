@@ -1,1 +1,15 @@
-import { render, screen } from '@testing-library/react';\nimport App from '../App';\n\njest.mock('../services/stacApi', () => ({\n  getCatalogs: jest.fn(() => Promise.resolve([])),\n  getCollections: jest.fn(() => Promise.resolve([])),\n  getItemCount: jest.fn(() => Promise.resolve(0)),\n  getSatelliteSummary: jest.fn(() => Promise.resolve({ total: 0 }))\n}));\n\ntest('renders STAC Granule Lookup Tool title', () => {\n  render(<App />);\n  const titleElement = screen.getByText(/STAC Granule Lookup Tool/i);\n  expect(titleElement).toBeInTheDocument();\n});
+import { render, screen } from '@testing-library/react';
+import App from '../App';
+
+jest.mock('../services/stacApi', () => ({
+  getCatalogs: jest.fn(() => Promise.resolve([])),
+  getCollections: jest.fn(() => Promise.resolve([])),
+  getItemCount: jest.fn(() => Promise.resolve(0)),
+  getSatelliteSummary: jest.fn(() => Promise.resolve({ total: 0 }))
+}));
+
+test('renders STAC Granule Lookup Tool title', () => {
+  render(<App />);
+  const titleElement = screen.getByText(/STAC Granule Lookup Tool/i);
+  expect(titleElement).toBeInTheDocument();
+});

@@ -8,7 +8,7 @@ describe('geocodingService', () => {
     jest.clearAllMocks();
   });
 
-  test('geocodeLocation returns simplified polygon', async () => {
+  test('searchLocation returns simplified polygon', async () => {
     const mockResponse = {
       data: {
         features: [{
@@ -26,7 +26,7 @@ describe('geocodingService', () => {
 
     axios.get.mockResolvedValue(mockResponse);
 
-    const result = await geocodingService.geocodeLocation('Paris');
+    const result = await geocodingService.searchLocation('Paris');
 
     expect(axios.get).toHaveBeenCalledWith(
       'https://nominatim.openstreetmap.org/search',
@@ -55,14 +55,14 @@ describe('geocodingService', () => {
   test('throws error when location not found', async () => {
     axios.get.mockResolvedValue({ data: { features: [] } });
 
-    await expect(geocodingService.geocodeLocation('InvalidLocation'))
+    await expect(geocodingService.searchLocation('InvalidLocation'))
       .rejects.toThrow('Location not found');
   });
 
   test('handles API errors', async () => {
     axios.get.mockRejectedValue(new Error('Network error'));
 
-    await expect(geocodingService.geocodeLocation('Paris'))
+    await expect(geocodingService.searchLocation('Paris'))
       .rejects.toThrow('Network error');
   });
 });

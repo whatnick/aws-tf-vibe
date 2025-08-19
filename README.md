@@ -1,5 +1,10 @@
 # STAC API Lookup Application
 
+![Backend Tests](https://img.shields.io/badge/Backend%20Tests-17%20passing-brightgreen)
+![Backend Coverage](https://img.shields.io/badge/Backend%20Coverage-88%25-brightgreen)
+![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-7%20passing-yellow)
+![Integration Tests](https://img.shields.io/badge/Integration%20Tests-Docker%20Based-blue)
+
 A production-ready serverless web application for searching and visualizing STAC (SpatioTemporal Asset Catalog) granules with interactive mapping, satellite data summaries, and comprehensive test coverage.
 
 ## 🚀 Live Production Application
@@ -42,11 +47,28 @@ A production-ready serverless web application for searching and visualizing STAC
 
 ## 🧪 Quality Assurance
 
-### Test Coverage (90% Minimum)
-- **Frontend Tests**: Component rendering, user interactions, API integration
-- **Backend Tests**: Route handlers, service layer, error handling
-- **Mocked Dependencies**: Axios, Leaflet, external APIs
-- **CI Integration**: Automated testing on all commits and PRs
+### Test Coverage & Approach
+- **Backend Tests**: 17 tests passing with 88% coverage (Jest + Supertest)
+- **Frontend Tests**: 7 tests passing with DOM-based testing (React Testing Library)
+- **Integration Tests**: Docker Compose based full-stack testing
+- **Test Environment**: Containerized testing with consistent environments
+- **Mocked Dependencies**: Axios, React-Leaflet, external APIs
+- **CI Integration**: Automated Docker-based testing on all commits and PRs
+
+### Testing Commands
+```bash
+# Run all tests
+./scripts/run-tests.sh
+
+# Run backend tests only
+docker-compose exec backend npm test
+
+# Run frontend tests only
+docker-compose exec frontend npm test
+
+# Run integration tests
+docker-compose up -d && curl -f http://localhost:3001/health
+```
 
 ### Security & Compliance
 - **Secrets Detection**: Baseline scanning with detect-secrets
@@ -57,8 +79,8 @@ A production-ready serverless web application for searching and visualizing STAC
 ## 📊 Current Status
 
 ✅ **Production Deployed**: Fully functional application live on AWS  
-✅ **CI/CD Active**: Automated testing and deployment pipeline  
-✅ **Test Coverage**: 90%+ coverage with comprehensive test suites  
+✅ **CI/CD Active**: Docker-based automated testing and deployment pipeline  
+✅ **Test Coverage**: Backend 88%, Frontend 26% (improving), Integration tests active  
 ✅ **Security Hardened**: Secrets detection and access controls  
 ✅ **Performance Optimized**: CloudFront CDN and responsive design  
 ✅ **Documentation Complete**: Comprehensive README and code comments

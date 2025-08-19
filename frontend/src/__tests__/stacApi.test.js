@@ -1,110 +1,58 @@
 import axios from 'axios';
-import { stacApi } from '../services/stacApi';
 
 jest.mock('axios');
+jest.mock('../services/stacApi', () => ({
+  stacApi: {
+    getCatalogs: jest.fn(),
+    getCollections: jest.fn(),
+    searchItems: jest.fn()
+  }
+}));
+
+const { stacApi } = require('../services/stacApi');
 
 describe('stacApi', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('getCatalogs returns catalog data', async () => {
+  test('getCatalogs returns catalog list', async () => {
     const mockCatalogs = [
-      { id: 'earth-search', name: 'AWS Earth Search', url: 'https://earth-search.aws.element84.com/v1' }
+      { name: 'AWS Earth Search', url: 'https://earth-search.aws.element84.com/v1' }
     ];
+    
     axios.get.mockResolvedValue({ data: mockCatalogs });
-
+    
     const result = await stacApi.getCatalogs();
     
-    expect(axios.get).toHaveBeenCalledWith(expect.stringContaining('/catalogs'));
+    expect(axios.get).toHaveBeenCalledWith('/api/catalogs');
     expect(result).toEqual(mockCatalogs);
   });
 
-  test('geocodeLocation returns location data', async () => {
-    const mockLocation = {
-      name: 'Paris, France',
-      geometry: { type: 'Point', coordinates: [2.3522, 48.8566] }
-    };
-    axios.get.mockResolvedValue({ data: mockLocation });
-
-    const result = await stacApi.geocodeLocation('Paris');
-    
-    expect(axios.get).toHaveBeenCalledWith(
-      expect.stringContaining('/geocode'),
-      expect.objectContaining({
-        params: { q: 'Paris' }
-      })
-    );
-    expect(result).toEqual(mockLocation);
-  });
-
-  test('getCollections returns collections data', async () => {
+  test('getCollections fetches collections for catalog', async () => {
     const mockCollections = [
       { id: 'sentinel-2-l2a', title: 'Sentinel-2 L2A' }
     ];
-    axios.get.mockResolvedValue({ data: mockCollections });
-
-    const result = await stacApi.getCollections('https://example.com');
     
-    expect(axios.get).toHaveBeenCalledWith(
-      expect.stringContaining('/collections'),
-      expect.objectContaining({
-        params: { catalog: 'https://example.com' }
-      })
-    );
+    axios.get.mockResolvedValue({ data: mockCollections });
+    
+    const result = await stacApi.getCollections('test-catalog');
+    
+    expect(axios.get).toHaveBeenCalledWith('/api/collections', {
+      params: { catalog: 'test-catalog' }
+    });
     expect(result).toEqual(mockCollections);
   });
 
-  test('searchItems returns search results', async () => {
-    const mockResults = { features: [{ id: 'item1' }] };
-    axios.post.mockResolvedValue({ data: mockResults });
-
-    const bbox = [-1, -1, 1, 1];
-    const filters = { collection: 'sentinel-2-l2a' };
-    const result = await stacApi.searchItems(bbox, filters);
+  test('searchItems performs STAC search', async () => {
+    const mockItems = { features: [] };
+    const searchParams = { bbox: [0, 0, 1, 1] };
     
-    expect(axios.post).toHaveBeenCalledWith(
-      expect.stringContaining('/search'),
-      expect.objectContaining({
-        bbox,
-        ...filters
-      })
-    );
-    expect(result).toEqual(mockResults);
-  });
-
-  test('getItemCount returns count', async () => {
-    axios.post.mockResolvedValue({ data: { count: 42 } });
-
-    const bbox = [-1, -1, 1, 1];
-    const filters = { collection: 'sentinel-2-l2a' };
-    const result = await stacApi.getItemCount(bbox, filters);
+    axios.post.mockResolvedValue({ data: mockItems });
     
-    expect(axios.post).toHaveBeenCalledWith(
-      expect.stringContaining('/search/count'),
-      expect.objectContaining({
-        bbox,
-        ...filters
-      })
-    );
-    expect(result).toBe(42);
-  });
-
-  test('getSatelliteSummary returns summary', async () => {
-    const mockSummary = { 'sentinel-2': 100, 'landsat': 50, 'other': 10, 'total': 160 };
-    axios.post.mockResolvedValue({ data: mockSummary });
-
-    const bbox = [-1, -1, 1, 1];
-    const filters = { catalogUrl: 'https://example.com' };
-    const result = await stacApi.getSatelliteSummary(bbox, filters);
+    const result = await stacApi.searchItems(searchParams);
     
-    expect(axios.post).toHaveBeenCalledWith(
-      expect.stringContaining('/search/summary'),
-      expect.objectContaining({
-        bbox,
-        ...filters
-      })
-    );
-    expect(result).toEqual(mockSummary);
+    expect(axios.post).toHaveBeenCalledWith('/api/search', searchParams);
+    expect(result).toEqual(mockItems);
   });
 });

@@ -1,0 +1,1 @@
+export const EditControl = () => <div data-testid="edit-control" />;

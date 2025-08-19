@@ -1,1 +1,25 @@
-import { render, screen } from '@testing-library/react';\nimport SatelliteSummary from '../components/SatelliteSummary';\n\ntest('renders satellite summary with data', () => {\n  const mockSummary = {\n    'sentinel-2': 150,\n    'landsat': 75,\n    'other': 25,\n    'total': 250\n  };\n\n  render(<SatelliteSummary summary={mockSummary} />);\n  \n  expect(screen.getByText('Satellite Data Summary')).toBeInTheDocument();\n  expect(screen.getByText('Sentinel-2')).toBeInTheDocument();\n  expect(screen.getByText('Landsat')).toBeInTheDocument();\n  expect(screen.getByText('250')).toBeInTheDocument();\n});\n\ntest('does not render when summary is empty', () => {\n  const mockSummary = { total: 0 };\n  \n  const { container } = render(<SatelliteSummary summary={mockSummary} />);\n  expect(container.firstChild).toBeNull();\n});
+import { render, screen } from '@testing-library/react';
+import SatelliteSummary from '../components/SatelliteSummary';
+
+test('renders satellite summary with data', () => {
+  const mockSummary = {
+    'sentinel-2': 150,
+    'landsat': 75,
+    'other': 25,
+    'total': 250
+  };
+
+  render(<SatelliteSummary summary={mockSummary} />);
+  
+  expect(screen.getByText('Satellite Data Summary')).toBeInTheDocument();
+  expect(screen.getByText('Sentinel-2')).toBeInTheDocument();
+  expect(screen.getByText('Landsat')).toBeInTheDocument();
+  expect(screen.getByText('250')).toBeInTheDocument();
+});
+
+test('does not render when summary is empty', () => {
+  const mockSummary = { total: 0 };
+  
+  const { container } = render(<SatelliteSummary summary={mockSummary} />);
+  expect(container.firstChild).toBeNull();
+});
