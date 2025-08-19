@@ -177,6 +177,28 @@ VITE_MAP_DEFAULT_CENTER=[0,0]
 VITE_MAP_DEFAULT_ZOOM=2
 ```
 
+### GitHub Actions Secrets
+For automated deployment, configure these repository secrets:
+```
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_SESSION_TOKEN=your_session_token (if using temporary credentials)
+```
+
+## CI/CD Pipeline
+
+### Automated Workflows
+- **Deploy**: Builds and deploys on push to master/main
+- **Test**: Runs linting and security scans on all PRs
+- **Security**: Detects secrets and runs code quality checks
+
+### Deployment Process
+1. Build React frontend and Lambda package
+2. Deploy infrastructure with Terraform
+3. Update frontend with API Gateway URL
+4. Sync files to S3 and invalidate CloudFront
+5. Output deployment URLs
+
 ### Project Structure
 ```
 stac-lookup-app/

@@ -1,0 +1,107 @@
+name: Deploy STAC Lookup App
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+env:
+  AWS_REGION: us-west-2
+  PROJECT_NAME: stac-lookup
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          frontend/package-lock.json
+          lambda/package-lock.json
+    
+    - name: Install dependencies
+      run: |
+        cd frontend && npm ci
+        cd ../lambda && npm ci --production
+    
+    - name: Build frontend
+      run: |
+        cd frontend
+        VITE_API_URL="https://API_GATEWAY_URL/prod/api" npm run build
+    
+    - name: Package Lambda
+      run: |
+        cd lambda
+        zip -r ../terraform/lambda.zip . -x "*.git*" "node_modules/.cache/*"
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_wrapper: false
+    
+    - name: Terraform Init
+      run: |
+        cd terraform
+        terraform init
+    
+    - name: Terraform Plan
+      run: |
+        cd terraform
+        terraform plan -var="project_name=${{ env.PROJECT_NAME }}" -var="aws_region=${{ env.AWS_REGION }}"
+    
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+      run: |
+        cd terraform
+        terraform apply -auto-approve -var="project_name=${{ env.PROJECT_NAME }}" -var="aws_region=${{ env.AWS_REGION }}"
+    
+    - name: Get Terraform Outputs
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+      id: terraform
+      run: |
+        cd terraform
+        echo "api_url=$(terraform output -raw api_url)" >> $GITHUB_OUTPUT
+        echo "s3_bucket=$(terraform output -raw s3_bucket)" >> $GITHUB_OUTPUT
+        echo "frontend_url=$(terraform output -raw frontend_url)" >> $GITHUB_OUTPUT
+    
+    - name: Update Frontend with API URL
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+      run: |
+        cd frontend
+        sed -i 's|https://API_GATEWAY_URL/prod/api|${{ steps.terraform.outputs.api_url }}/api|g' dist/assets/*.js
+    
+    - name: Deploy to S3
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+      run: |
+        cd frontend
+        aws s3 sync dist/ s3://${{ steps.terraform.outputs.s3_bucket }} --delete
+    
+    - name: Invalidate CloudFront
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+      run: |
+        DISTRIBUTION_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Comment=='OAI for ${{ env.PROJECT_NAME }} frontend'].Id" --output text)
+        if [ ! -z "$DISTRIBUTION_ID" ]; then
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
+        fi
+    
+    - name: Output URLs
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+      run: |
+        echo "🚀 Deployment Complete!"
+        echo "Frontend URL: ${{ steps.terraform.outputs.frontend_url }}"
+        echo "API URL: ${{ steps.terraform.outputs.api_url }}"
