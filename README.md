@@ -65,9 +65,21 @@ A production-ready serverless web application for searching and visualizing STAC
 
 ## 🔧 Local Development
 
-Access the development server at http://localhost:5173
+### Docker Compose (Recommended)
+```bash
+# Quick setup with Docker
+./scripts/dev-setup.sh
 
-### Quick Start
+# Or manually
+docker-compose up -d
+```
+
+**Access Points:**
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3001/api
+- Health Check: http://localhost:3001/health
+
+### Manual Setup
 ```bash
 # Install dependencies
 npm install
@@ -79,6 +91,26 @@ cp .env.example .env
 
 # Start development servers
 npm run dev
+```
+
+### Docker Commands
+```bash
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Restart services
+docker-compose restart
+
+# Access containers
+docker-compose exec backend sh
+docker-compose exec frontend sh
+
+# Run tests
+docker-compose exec backend npm test
+docker-compose exec frontend npm test
 ```
 
 ## 🌍 Supported STAC Catalogs

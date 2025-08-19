@@ -1,0 +1,21 @@
+version: '3.8'
+
+# Override file for development-specific configurations
+services:
+  backend:
+    environment:
+      - DEBUG=stac-lookup:*
+      - LOG_LEVEL=debug
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - /app/coverage
+
+  frontend:
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/dist
+      - /app/coverage
