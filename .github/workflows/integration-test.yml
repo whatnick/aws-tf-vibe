@@ -1,0 +1,41 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build and start services
+      run: docker-compose up -d --build
+    
+    - name: Wait for services
+      run: |
+        timeout 60 bash -c 'until curl -f http://localhost:3001/health; do sleep 2; done'
+        timeout 60 bash -c 'until curl -f http://localhost:5173; do sleep 2; done'
+    
+    - name: Run integration tests
+      run: |
+        # Test backend health
+        curl -f http://localhost:3001/health
+        
+        # Test API endpoints
+        curl -f http://localhost:3001/api/catalogs
+        
+        # Test frontend
+        curl -f http://localhost:5173
+    
+    - name: Show logs on failure
+      if: failure()
+      run: docker-compose logs
+    
+    - name: Cleanup
+      if: always()
+      run: docker-compose down -v
