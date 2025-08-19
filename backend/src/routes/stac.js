@@ -71,4 +71,20 @@ router.post('/search/count', async (req, res) => {
   }
 });
 
+router.post('/search/summary', async (req, res) => {
+  try {
+    const { bbox, startDate, endDate, cloudCover, catalogUrl } = req.body;
+    const summary = await stacService.getSatelliteSummary({
+      bbox,
+      startDate,
+      endDate,
+      cloudCover,
+      catalogUrl
+    });
+    res.json(summary);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

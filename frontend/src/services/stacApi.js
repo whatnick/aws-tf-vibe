@@ -36,6 +36,14 @@ export const stacApi = {
       ...filters
     });
     return response.data.count;
+  },
+
+  async getSatelliteSummary(bbox, filters) {
+    const response = await axios.post(`${API_BASE}/search/summary`, {
+      bbox,
+      ...filters
+    });
+    return response.data;
   }
 };
 

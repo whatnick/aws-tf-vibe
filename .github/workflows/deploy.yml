@@ -29,7 +29,18 @@ jobs:
     - name: Install dependencies
       run: |
         cd frontend && npm ci
+        cd ../backend && npm ci
         cd ../lambda && npm ci --production
+    
+    - name: Test Frontend
+      run: |
+        cd frontend
+        npm test -- --watchAll=false
+    
+    - name: Test Backend
+      run: |
+        cd backend
+        npm test -- --watchAll=false
     
     - name: Build frontend
       run: |

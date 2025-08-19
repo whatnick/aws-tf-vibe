@@ -1,0 +1,1 @@
+export default {\n  testEnvironment: 'node',\n  transform: {},\n  extensionsToTreatAsEsm: ['.js'],\n  globals: {\n    'ts-jest': {\n      useESM: true\n    }\n  },\n  testMatch: [\n    '<rootDir>/src/**/__tests__/**/*.js',\n    '<rootDir>/src/**/?(*.)(test|spec).js'\n  ]\n};
